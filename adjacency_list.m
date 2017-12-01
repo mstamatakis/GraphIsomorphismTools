@@ -1,5 +1,5 @@
 function [ A_lH ] = adjacency_list( N )
-% Calculating adjacenct list for H
+% Calculating adjacency list for H
 % Initiliasing the reduced adjacency matrix
 if N==1
     A_lH=zeros((N+1)^2,4);
