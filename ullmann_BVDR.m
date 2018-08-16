@@ -1,10 +1,12 @@
-function [ result,nodes ] = ullmann(N,A_lG )
+function [ result,nodes ] = ullmann_BVDR(N,A_lG )
 [ A_H,A_G ] = adjacency_matrix( N,A_lG );
 [ p_H_total,~,p_G_total,~ ] = number_of_points_and_max_neighbour( N,A_lG );
 [ M0_mod,row_1nb_all ] = ullmann_preliminary_root_refinement( N,A_lG );
 % Determining the inner nodes and terminal nodes
 nodes=cell(2,1);
 track_change=cell(2,1);
+A_H = uint8(A_H);
+M0_mod = uint8(M0_mod);
 for p_G=1:p_G_total
     n=1;
     if p_G==1 % the first iteration
@@ -15,7 +17,7 @@ for p_G=1:p_G_total
                 % Ullmann's refinement
                 u_ref=1; % dummy variable for ullmann's refinement
                     for p_G_nb=1:sum(A_G(p_G,:)) % for all neighbours of p_G                    
-                    if M(A_lG(p_G,p_G_nb),:)*A_H(:,p_H)==0 % if this equals to zero, then this inner node will not generate subgraph isomorphism
+                    if sum(bitand(M(A_lG(p_G,p_G_nb),:),transpose(A_H(:,p_H))))==0 % if this equals to zero, then this inner node will not generate subgraph isomorphism
                         u_ref=0;
                         break
                     end
@@ -52,13 +54,13 @@ for p_G=1:p_G_total
                         for n_p_g=1:p_G
                             for n_p_g_nb=1:sum(A_G(n_p_g,:))
                                 if n_p_g==p_G
-                                    if M(A_lG(n_p_g,n_p_g_nb),:)*A_H(:,p_H)==0
+                                    if sum(bitand(M(A_lG(n_p_g,n_p_g_nb),:),transpose(A_H(:,p_H))))==0
                                         u_ref=0;
                                         break
                                     end
                                 else
                                     previous_track=cell2mat(track_change{p_G-1,n_node});
-                                    if M(A_lG(n_p_g,n_p_g_nb),:)*A_H(:,previous_track(n_p_g))==0
+                                    if sum(bitand(M(A_lG(n_p_g,n_p_g_nb),:),transpose(A_H(:,previous_track(n_p_g)))))==0
                                         u_ref=0;
                                         break
                                     end
@@ -84,8 +86,8 @@ for p_G=1:p_G_total
     end
 end
 
-[ result ] = terminal_nodes_test( N,A_lG,nodes );
-% result = 0;
+% [ result ] = terminal_nodes_test_BV( N,A_lG,nodes );
+result = 0;
 
 end
 
