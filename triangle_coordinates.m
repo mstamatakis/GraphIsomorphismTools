@@ -1,4 +1,4 @@
-function [ H_co ] = coordinates( N )
+function [ H_co ] = triangle_coordinates( N )
 %% Calculating coordinates
 H_co = zeros((N+1)^2,2); % Initilisaing the coordinates matrix
 x_diff=0; % dummy variable for calculating the coordinate of x
@@ -14,6 +14,4 @@ for n_rows = 1:N+1
     y_diff=y_diff+1;
     p_H_label=p_H_label+(N+1);    
 end
-
-
 end
