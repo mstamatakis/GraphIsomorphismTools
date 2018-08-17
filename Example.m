@@ -10,6 +10,7 @@ opts.measure = true;
 opts.order = 'Default';
 %% outputs
 A_list_H = data_adjacency_list(graph_size, active_fraction);
+plot_data_graph(graph_size)
 % Brute-force search
 [ result_brute, branches_brute ] = DFS(A_list_H, A_list_G, 'Brute', opts);
 % Ullmann's algorithm
