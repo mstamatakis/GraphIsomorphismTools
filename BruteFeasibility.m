@@ -22,5 +22,5 @@ for v_G = 1:N_G
         end
     end
 end          
-
 F = true;
+end

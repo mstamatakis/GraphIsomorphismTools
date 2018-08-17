@@ -10,42 +10,36 @@ function [M0] = FocusPreProcess(A_list_H, A_list_G, A_H, A_G)
 %   A_H - the adjacency matrix of the data graph
 %   A_G - the adjacency matrix of the query graph
 
+% initialise variables
 N_H = size(A_list_H , 1);
 N_G = size(A_list_G , 1);
-
-M0 = ones(N_G,N_H);
-
 deg_H = sum(A_H, 2);
 deg_G = sum(A_G, 2);
-
 deg_neig_H = cell(N_H, 1);
 deg_neig_G = cell(N_G, 1);
-
-% Create Zampelli et al's degree of neighbours list
-for i = 1:N_H
-    for j = 1:deg_H(i)
-        deg_neig_H{i} = [deg_neig_H{i} deg_H(A_list_H(i,j))];
+M0 = ones(N_G,N_H);
+% create degree of neighbours list used in iterated labeling filtering
+for v_H = 1:N_H
+    for j = 1:deg_H(v_H)
+        deg_neig_H{v_H} = [deg_neig_H{v_H} deg_H(A_list_H(v_H,j))];
     end
-    deg_neig_H{i} = sort(deg_neig_H{i},'descend');
+    deg_neig_H{v_H} = sort(deg_neig_H{v_H},'descend');
 end
-
-for i = 1:N_G
-    for j = 1:deg_G(i)
-        deg_neig_G{i} = [deg_neig_G{i} deg_G(A_list_G(i,j))];
+for v_G = 1:N_G
+    for j = 1:deg_G(v_G)
+        deg_neig_G{v_G} = [deg_neig_G{v_G} deg_G(A_list_G(v_G,j))];
     end
-    deg_neig_G{i} = sort(deg_neig_G{i},'descend');
+    deg_neig_G{v_G} = sort(deg_neig_G{v_G},'descend');
 end
-    
-
-% Filtering vertices
-for p_H=1:N_H
-    for p_G=1:N_G
-        if deg_H(p_H)<deg_G(p_G)
-            M0(p_G,p_H)=0;
+% filtering domains
+for v_H=1:N_H
+    for v_G=1:N_G
+        if deg_H(v_H)<deg_G(v_G)
+            M0(v_G,v_H)=0;
         else
-            for k = 1:deg_G(p_G)
-                if  deg_neig_H{p_H}(k) < deg_neig_G{p_G}(k)
-                    M0(p_G,p_H)=0;
+            for k = 1:deg_G(v_G)
+                if  deg_neig_H{v_H}(k) < deg_neig_G{v_G}(k)
+                    M0(v_G,v_H)=0;
                     break
                 end
             end
@@ -54,5 +48,3 @@ for p_H=1:N_H
 end
 
 end
-
-

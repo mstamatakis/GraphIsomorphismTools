@@ -1,5 +1,6 @@
 function [ result, n_branches ] = DFS(A_list_H, A_list_G, method, opts)
-%DFS Solve subgraph isomorphism problem using depth-first search
+%DFS Initialise variables for solving subgraph isomorphism before the
+% recursive search begins in a depth-first search framework
 %   DFS(A_list_H, A_list_G, method, opts) returns all subgraphs with the
 %   structure G that is embedded in a data graph H using the method
 %   specified in one of the input arguments. Additional options, including
@@ -21,7 +22,6 @@ function [ result, n_branches ] = DFS(A_list_H, A_list_G, method, opts)
 if nargin > 4
     error("The function 'DFS' requires at most 4 inputs.");
 end
-
 if nargin == 3
     opts.measure = false;
     switch method
@@ -33,7 +33,6 @@ if nargin == 3
             opts.order = 'Order';
     end
 end
-
 if nargin == 4
     if isfield(opts, 'measure') == 0
         opts.measure = false;
@@ -49,7 +48,6 @@ if nargin == 4
         end
     end
 end
-
 % Initialise variables
 N_H = size(A_list_H,1);
 N_G = size(A_list_G,1);
@@ -60,19 +58,9 @@ M_G = zeros(N_G,1);
 [ A_H,A_G ] = adjacency_matrix( A_list_H,A_list_G );
 A_H = uint16(A_H);
 A_G = uint16(A_G);
-n_neighbors_H = sum(A_H,2);
-n_neighbors_G = sum(A_G,2);
+deg_H = sum(A_H,2);
+deg_G = sum(A_G,2);
 n_G_matched = 0;
-% Create query vertices order
-% switch opts.order
-%     case 'NoOrder'
-%         v_G_unmatched = 1:N_G;
-%     case 'FocusOrder'
-%         v_G_unmatched = FocusSearchOrder(A_list_G, A_G);
-%     case 'RIOrder'
-%         [v_G_unmatched, ~] = RIGreatestConstraintFirst(A_list_G, A_G);
-% end
-
 % Start solving the problem
 % Trivial case where query graph contains more vertices than the data graph
 if N_G>N_H
@@ -81,14 +69,16 @@ end
 % Other non-trivial cases
 switch method
     case 'Brute'
-        [ result, n_branches ] = DFSRecursive(M_H, M_G, A_list_H, A_list_G, A_H, A_G, N_H, N_G, method, opts, result, n_branches, [], [], [], [], 0);
+        [ result, n_branches ] = DFSRecursive(M_H, M_G, A_list_H,...
+            A_list_G, A_H, A_G, N_H, N_G, method, opts, result,...
+            n_branches, [], [], [], [], 0);
     case 'VF2'
-        [ result, n_branches ] = DFSRecursive(M_H, M_G, A_list_H, A_list_G, A_H, A_G, N_H, N_G, method, opts, result, n_branches, [], [], [], [], 0);
+        [ result, n_branches ] = DFSRecursive(M_H, M_G, A_list_H,...
+            A_list_G, A_H, A_G, N_H, N_G, method, opts, result,...
+            n_branches, [], [], [], [], 0);
     case 'RI'
-        [mu,pt_mu] = RIOrder(A_list_G, A_G);
-        [ result, n_branches ] = DFSRecursive(M_H, M_G, A_list_H, A_list_G, A_H, A_G, N_H, N_G, method, opts, result, n_branches, mu, pt_mu , n_neighbors_H, n_neighbors_G, n_G_matched);
-        
-        
+        [mu,parent] = RIOrder(A_list_G, A_G);
+        [ result, n_branches ] = DFSRecursive(M_H, M_G, A_list_H,...
+            A_list_G, A_H, A_G, N_H, N_G, method, opts, result,...
+            n_branches, mu, parent , deg_H, deg_G, n_G_matched);        
 end
-        
-

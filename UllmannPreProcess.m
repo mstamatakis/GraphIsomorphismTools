@@ -1,15 +1,14 @@
 function [ M0 ] = UllmannPreProcess( A_H, A_G, N_H, N_G)
-%% Detailed description of the function
-% This function applies the allDifferent constraint to an initialized
-% domain. That is, if a domain is single-valued, this single value is
-% removed from all other domains.
-% Inputs
-%   A_lH - the adjacency list of the data graph H
-%   A_lG - the adjacency list of the query graph G
-% Outputs
-%   M0_mod - the modified domain after applying the alldifferent constraint
-%   row_1nb_all - vector that contains the label of query graph nodes that
-%                 have only one possible match
+%UllmannPreProcess Generate the initial domain in Ullmann's algorithm
+%   UllmannPreProcess( A_H, A_G, N_H, N_G) returns a matrix M0 of size
+%   (N_G, N_H) where each row of the matrix represents the domain of a
+%   query vertex
+%
+%   REQUIRED INPUTS:
+%   A_H - the adjacency matrix of the data graph
+%   A_G - the adjacency matrix of the query graph
+%   N_H - the number of data vertices
+%   N_G - the number of query vertices
 
 % Invariant domain reduction
 M0 = zeros(N_G,N_H);
