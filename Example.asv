@@ -1,0 +1,14 @@
+clear, close all
+%% inputs
+% data graph size, fraction of active data vertices and adjacency list of
+% query graph
+graph_size = 5;
+active_fraction = 1;
+A_list_G = [ 2 3; 1 3; 1 2];
+% option inputs
+opts.measure = true;
+opts.order = 'Default';
+%% outputs
+A_list_H = data_adjacency_list(graph_size, active_fraction);
+% Brute-force
+[result_brute branches_brute] = 
